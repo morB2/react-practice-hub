@@ -11,7 +11,7 @@ export function PixaInput(props) {
               <input
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    props.fetchImages(inputRef.current.value);
+                    props.fetchImages(inputRef.current.value, props.setImages, props.setLoading, props.setError);
                   }
                 }}
                 ref={inputRef}

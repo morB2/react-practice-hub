@@ -1,51 +1,16 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import PixaInfo from "./PixaInfo";
 import { PixaInput } from "./PixaInput";
-const BASE_URL = "https://api.pexels.com/v1";
+import { fetchImages } from "../services/FetchData";
 
 const Pixa = () => {
-  const API_KEY = process.env.REACT_APP_PEXELS_API_KEY;
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchImages("cats");
+    fetchImages("cats", setImages, setLoading, setError);
   }, []);
-
-  const fetchImages = async (q, page = 1, per_page = 40) => {
-    if (!API_KEY) {
-      setError("API key is missing");
-      return;
-    }
-    setImages([]);
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.get(`${BASE_URL}/search`, {
-        headers: {
-          Authorization: API_KEY,
-        },
-        params: {
-          query: q,
-          page: page,
-          per_page: per_page,
-        },
-      });
-
-      setImages(response.data.photos || []);
-    } catch (err) {
-      console.error("fetchImages error:", err);
-      const status = err.response?.status;
-      setError(
-        status ? `Error ${status} ${err.response.statusText}` : "Network error"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="container-fluid py-4">
@@ -61,7 +26,12 @@ const Pixa = () => {
             </p>
           </div>
 
-          <PixaInput fetchImages={fetchImages} />
+          <PixaInput
+            fetchImages={fetchImages}
+            setImages={setImages}
+            setLoading={setLoading}
+            setError={setError}
+          />
 
           {loading && (
             <div className="d-flex justify-content-center py-5">
